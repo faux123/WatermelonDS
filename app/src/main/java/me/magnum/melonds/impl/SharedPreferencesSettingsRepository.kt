@@ -701,8 +701,19 @@ class SharedPreferencesSettingsRepository(
     override fun getVulkanDriverConfiguration(nativeLibraryDir: String): VulkanDriverConfiguration {
         val selectedDriver = getSelectedVulkanDriver()?.withResolvedRuntimePath()
         val requestedMode = getVulkanDriverMode()
+        // A driver for the other GPU family can still be selected, for example after a backup
+        // restored from another device. Loading it would fail, so the system driver is used.
+        val selectedDriverRunsHere = selectedDriver == null ||
+            AdrenoVulkanDriverSupport.isRunnableHere(selectedDriver.driverName)
+        if (requestedMode == VulkanDriverMode.CUSTOM && !selectedDriverRunsHere) {
+            android.util.Log.w(
+                "VulkanDriver",
+                "Not loading ${selectedDriver?.driverName}: built for another GPU family than ${AdrenoVulkanDriverSupport.gpuFamily}",
+            )
+        }
         val useCustomDriver = requestedMode == VulkanDriverMode.CUSTOM &&
             selectedDriver != null &&
+            selectedDriverRunsHere &&
             AdrenoVulkanDriverSupport.isSupported(context)
         val tmpDir = File(context.cacheDir, "adrenotools/tmp").apply { mkdirs() }
 

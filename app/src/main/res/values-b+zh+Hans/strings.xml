@@ -936,12 +936,12 @@
     <string name="system_ignore_display_cutout_in_layouts">在布局中忽略屏幕缺口</string>
     <string name="system_ignore_display_cutout_in_layouts_summary">允许模拟器布局使用刘海或摄像头挖孔区域。更改此设置后，请重启布局编辑器或模拟器。</string>
     <string name="video_vulkan_driver_category">Vulkan 驱动</string>
-    <string name="video_vulkan_driver_mode">Adreno Vulkan 驱动</string>
+    <string name="video_vulkan_driver_mode">Vulkan 驱动</string>
     <string name="video_vulkan_driver_import">导入自定义驱动</string>
     <string name="video_vulkan_driver_import_summary">安装驱动压缩包。更改将在下次启动游戏时生效。</string>
     <string name="video_vulkan_driver_remove">移除自定义驱动</string>
     <string name="video_vulkan_driver_remove_summary">删除已安装的自定义驱动。</string>
-    <string name="video_vulkan_driver_unsupported">自定义驱动仅适用于配备 Adreno GPU、运行 Android 9 及以上系统的设备，并且需要 GitHub arm64 版本。</string>
+    <string name="video_vulkan_driver_unsupported">自定义驱动仅适用于配备 Adreno 或 Mali GPU、运行 Android 9 及以上系统的设备，并且需要 GitHub arm64 版本。</string>
     <string name="video_vulkan_driver_no_custom">选择此选项前，请先导入自定义驱动。</string>
     <string name="video_vulkan_driver_active_system">正在使用 Android 系统 Vulkan 驱动。</string>
     <string name="video_vulkan_driver_active_custom">Vulkan 启动时将使用 %1$s。</string>
@@ -949,6 +949,7 @@
     <string name="video_vulkan_driver_import_failed">无法导入 Vulkan 驱动压缩包。</string>
     <string name="video_vulkan_driver_import_not_zip">请选择 .zip 驱动包。</string>
     <string name="video_vulkan_driver_import_no_driver">该压缩包不包含受支持的 Vulkan 驱动库。</string>
+    <string name="video_vulkan_driver_import_wrong_gpu">此驱动适用于 %1$s GPU，而本设备使用 %2$s GPU。</string>
     <string name="video_vulkan_driver_import_ambiguous">该压缩包包含多个 Vulkan 驱动库。请使用仅含单个驱动的压缩包。</string>
     <string name="video_vulkan_driver_removed">已移除 Vulkan 驱动：%1$s。</string>
     <string name="video_vulkan_driver_mode_system">Android 系统驱动</string>

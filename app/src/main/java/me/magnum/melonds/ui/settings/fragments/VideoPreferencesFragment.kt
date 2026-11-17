@@ -362,7 +362,7 @@ class VideoPreferencesFragment : BasePreferenceFragment(), PreferenceFragmentTit
 
     private fun setupFreedrenoSettingsSubScreen() {
         preferenceScreen.isEnabled =
-            me.magnum.melonds.impl.AdrenoVulkanDriverSupport.isSupported(requireContext()) &&
+            me.magnum.melonds.impl.AdrenoVulkanDriverSupport.isAdrenoSupported(requireContext()) &&
             !requireActivity().intent.getBooleanExtra(SettingsActivity.KEY_IN_GAME, false)
         for (variable in me.magnum.melonds.impl.FreedrenoSettings.variables) {
             findPreference<EditTextPreference>(
@@ -446,6 +446,8 @@ class VideoPreferencesFragment : BasePreferenceFragment(), PreferenceFragmentTit
         }
 
         category.summary = null
+        findPreference<Preference>(FREEDRENO_SETTINGS_KEY)?.isVisible =
+            me.magnum.melonds.impl.AdrenoVulkanDriverSupport.isAdrenoSupported(requireContext())
         updateVulkanDriverPreferenceSummaries(modePreference, removePreference)
     }
 
@@ -491,7 +493,20 @@ class VideoPreferencesFragment : BasePreferenceFragment(), PreferenceFragmentTit
                     Toast.LENGTH_LONG,
                 ).show()
             }.onFailure { throwable ->
-                val messageRes = when ((throwable as? AdrenoVulkanDriverManager.ImportException)?.reason) {
+                val importException = throwable as? AdrenoVulkanDriverManager.ImportException
+                if (importException?.reason == AdrenoVulkanDriverManager.ImportException.Reason.WrongGpu) {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(
+                            R.string.video_vulkan_driver_import_wrong_gpu,
+                            importException.driverFamily?.displayName,
+                            me.magnum.melonds.impl.AdrenoVulkanDriverSupport.gpuFamily?.displayName,
+                        ),
+                        Toast.LENGTH_LONG,
+                    ).show()
+                    return@onFailure
+                }
+                val messageRes = when (importException?.reason) {
                     AdrenoVulkanDriverManager.ImportException.Reason.NotZip -> R.string.video_vulkan_driver_import_not_zip
                     AdrenoVulkanDriverManager.ImportException.Reason.NoDriver -> R.string.video_vulkan_driver_import_no_driver
                     AdrenoVulkanDriverManager.ImportException.Reason.AmbiguousDriver -> R.string.video_vulkan_driver_import_ambiguous

@@ -21,8 +21,13 @@ class AdrenoVulkanDriverManager(
         val libraryName: String?,
     )
 
-    class ImportException(val reason: Reason) : Exception(reason.name) {
+    class ImportException(
+        val reason: Reason,
+        // Set for WrongGpu: the GPU family the package's library was built for.
+        val driverFamily: GpuFamily? = null,
+    ) : Exception(reason.name) {
         enum class Reason {
+            WrongGpu,
             UnsupportedBuild,
             NotZip,
             InvalidZip,
@@ -57,16 +62,25 @@ class AdrenoVulkanDriverManager(
             val metadata = readDriverMetadata(pendingRoot)
             val driverFile = selectDriverFile(pendingRoot, metadata)
             val driverDir = driverFile.parentFile ?: throw ImportException(ImportException.Reason.NoDriver)
+            AdrenoVulkanDriverSupport.wrongFamily(driverFile.name, AdrenoVulkanDriverSupport.gpuFamily)?.let {
+                throw ImportException(ImportException.Reason.WrongGpu, driverFamily = it)
+            }
             val importedDisplayName = metadata.name
                 ?.takeIf { it.isNotBlank() }
                 ?: displayName.removeSuffix(".zip")
+
+            // selectDriverFile can return a canonical path (/data/data/...) while pendingRoot is
+            // /data/user/0/..., which made this a chain of "../" into the deleted pending dir.
+            // Computed before the rename so a failure leaves nothing under installedRoot.
+            val driverDirRelativePath = driverDir.canonicalFile.toRelativeString(pendingRoot.canonicalFile)
+            if (driverDirRelativePath.startsWith("..")) {
+                throw ImportException(ImportException.Reason.InvalidZip)
+            }
 
             installedRoot.deleteRecursively()
             if (!pendingRoot.renameTo(installedRoot)) {
                 throw ImportException(ImportException.Reason.InvalidZip)
             }
-
-            val driverDirRelativePath = driverDir.toRelativeString(pendingRoot)
             val currentDriverDir = if (driverDirRelativePath == ".") {
                 installedRoot
             } else {
@@ -90,11 +104,12 @@ class AdrenoVulkanDriverManager(
     }
 
     fun removeDriver(id: String) {
-        settingsRepository.getInstalledVulkanDrivers()
-            .firstOrNull { it.id == id }
-            ?.driverDir
-            ?.let { File(it).parentFile }
-            ?.deleteRecursively()
+        // Delete the package's own install dir. The old code deleted driverDir's parent, which is
+        // the whole adreno-drivers store when the library sits at the zip root (driverDir ==
+        // installedRoot), so removing one driver removed them all.
+        if (runCatching { UUID.fromString(id) }.isSuccess) {
+            File(File(context.filesDir, "adreno-drivers"), "driver-$id").deleteRecursively()
+        }
         settingsRepository.removeCustomVulkanDriver(id)
     }
 
@@ -151,9 +166,13 @@ class AdrenoVulkanDriverManager(
     }
 
     private fun selectDriverFile(root: File, metadata: DriverMetadata): File {
-        val soFiles = root.walkTopDown()
+        val allSoFiles = root.walkTopDown()
             .filter { it.isFile && it.extension.equals("so", ignoreCase = true) }
             .toList()
+        // A package carrying both Turnip and PanVK must pick the one for this GPU. If none fits,
+        // keep them all so the caller reports WrongGpu instead of NoDriver.
+        val soFiles = allSoFiles.filter { AdrenoVulkanDriverSupport.isRunnableHere(it.name) }
+            .ifEmpty { allSoFiles }
 
         metadata.libraryName?.let { libraryName ->
             val metadataDriver = File(root, libraryName).canonicalFile
@@ -166,7 +185,7 @@ class AdrenoVulkanDriverManager(
             }
         }
 
-        listOf("libvulkan_freedreno.so", "vulkan.adreno.so").forEach { preferredName ->
+        listOf("libvulkan_freedreno.so", "vulkan.adreno.so", "libvulkan_panfrost.so").forEach { preferredName ->
             val matches = soFiles.filter { it.name.equals(preferredName, ignoreCase = true) }
             if (matches.size == 1) {
                 return matches.first()

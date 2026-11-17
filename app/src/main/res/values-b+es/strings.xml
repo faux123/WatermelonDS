@@ -248,12 +248,12 @@
     <string name="microphone_source">Fuente de micrófono</string>
     <string name="controller_layout">Disposición del controlador</string>
     <string name="video_vulkan_driver_category">Driver Vulkan</string>
-    <string name="video_vulkan_driver_mode">Driver Vulkan Adreno</string>
+    <string name="video_vulkan_driver_mode">Driver Vulkan</string>
     <string name="video_vulkan_driver_import">Importar driver personalizado</string>
     <string name="video_vulkan_driver_import_summary">Instala un ZIP de driver. Los cambios aplican al iniciar el siguiente juego.</string>
     <string name="video_vulkan_driver_remove">Eliminar driver personalizado</string>
     <string name="video_vulkan_driver_remove_summary">Elimina drivers personalizados instalados.</string>
-    <string name="video_vulkan_driver_unsupported">Los drivers Adreno personalizados solo están disponibles en el build GitHub arm64 con Android 9 o superior.</string>
+    <string name="video_vulkan_driver_unsupported">Los drivers personalizados requieren una GPU Adreno o Mali, el build GitHub arm64 y Android 9 o superior.</string>
     <string name="video_vulkan_driver_no_custom">Importa un driver personalizado antes de seleccionar esta opción.</string>
     <string name="video_vulkan_driver_active_system">Usando el driver Vulkan del sistema Android.</string>
     <string name="video_vulkan_driver_active_custom">Usando %1$s al iniciar Vulkan.</string>
@@ -261,6 +261,7 @@
     <string name="video_vulkan_driver_import_failed">No se pudo importar el ZIP del driver Vulkan.</string>
     <string name="video_vulkan_driver_import_not_zip">Selecciona un paquete de driver .zip.</string>
     <string name="video_vulkan_driver_import_no_driver">El ZIP no contiene una librería de driver Vulkan compatible.</string>
+    <string name="video_vulkan_driver_import_wrong_gpu">Este driver es para una GPU %1$s, y este dispositivo tiene una GPU %2$s.</string>
     <string name="video_vulkan_driver_import_ambiguous">El ZIP contiene varios drivers Vulkan. Usa un paquete con un solo driver.</string>
     <string name="video_vulkan_driver_removed">Driver Vulkan eliminado: %1$s.</string>
     <string name="video_vulkan_driver_mode_system">Driver del sistema Android</string>

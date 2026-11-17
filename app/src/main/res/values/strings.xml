@@ -375,12 +375,12 @@
     <string name="video_vulkan_drs">Dynamic internal resolution</string>
     <string name="video_vulkan_drs_summary">The game targets the selected internal resolution, but under heavy load it renders at a lower internal resolution to keep a stable 60 fps. While enabled, Frameskip is off.</string>
     <string name="frameskip_mode_disabled_by_drs">DRS is active; to use Frameskip, disable dynamic internal resolution in Video settings.</string>
-    <string name="video_vulkan_driver_mode">Adreno Vulkan driver</string>
+    <string name="video_vulkan_driver_mode">Vulkan driver</string>
     <string name="video_vulkan_driver_import">Import custom driver</string>
     <string name="video_vulkan_driver_import_summary">Install a driver ZIP. Changes apply the next time a game starts.</string>
     <string name="video_vulkan_driver_remove">Remove custom driver</string>
     <string name="video_vulkan_driver_remove_summary">Delete installed custom drivers.</string>
-    <string name="video_vulkan_driver_unsupported">Custom drivers require an Adreno GPU, the GitHub arm64 build, and Android 9 or newer.</string>
+    <string name="video_vulkan_driver_unsupported">Custom drivers require an Adreno or Mali GPU, the GitHub arm64 build, and Android 9 or newer.</string>
     <string name="video_vulkan_driver_no_custom">Import a custom driver before selecting this option.</string>
     <string name="video_vulkan_driver_active_system">Using Android system Vulkan driver.</string>
     <string name="video_vulkan_driver_active_custom">Using %1$s when Vulkan starts.</string>
@@ -388,6 +388,7 @@
     <string name="video_vulkan_driver_import_failed">Could not import Vulkan driver ZIP.</string>
     <string name="video_vulkan_driver_import_not_zip">Select a .zip driver package.</string>
     <string name="video_vulkan_driver_import_no_driver">The ZIP does not contain a supported Vulkan driver library.</string>
+    <string name="video_vulkan_driver_import_wrong_gpu">This driver is for a %1$s GPU, and this device has a %2$s GPU.</string>
     <string name="video_vulkan_driver_import_ambiguous">The ZIP contains multiple Vulkan driver libraries. Use a package with a single driver.</string>
     <string name="video_vulkan_driver_removed">Removed Vulkan driver: %1$s.</string>
     <string name="video_vulkan_driver_mode_system">Android system driver</string>
